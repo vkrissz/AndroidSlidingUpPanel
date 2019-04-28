@@ -209,6 +209,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private boolean mIsTouchEnabled;
 
+    private OnBackgroundClick mBackgroundListener;
+
     private float mPrevMotionX;
     private float mPrevMotionY;
     private float mInitialMotionX;
@@ -967,6 +969,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final float x = ev.getX();
         final float y = ev.getY();
 
+        if (!isViewUnder(mSlideableView, (int)x, (int)y)) {
+            if (mBackgroundListener != null) {
+                mBackgroundListener.onClick();
+            }
+
+            return false;
+        }
+
         if (action == MotionEvent.ACTION_DOWN) {
             mIsScrollableViewHandlingTouch = false;
             mPrevMotionX = x;
@@ -1143,6 +1153,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         PanelState oldState = mSlideState;
         mSlideState = state;
         dispatchOnPanelStateChanged(this, oldState, state);
+    }
+
+    public void setOnBackgroundClicked(OnBackgroundClick listener) {
+        mBackgroundListener = listener;
     }
 
     /**
@@ -1487,5 +1501,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
 
         }
+    }
+
+    public interface OnBackgroundClick {
+        void onClick();
     }
 }
